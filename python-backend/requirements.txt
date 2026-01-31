@@ -1,0 +1,26 @@
+# MindSpore NIDS - Huawei ICT Competition 2025-2026
+# Requirements for CIC-IDS based Network Intrusion Detection System
+
+# Core MindSpore Framework (Huawei AI)
+mindspore>=2.2.0
+mindspore-gpu>=2.2.0  # Pour GPU Ascend/CUDA
+
+# Data Processing
+numpy>=1.21.0
+pandas>=1.5.0
+scikit-learn>=1.2.0
+
+# Visualization (optional, for local testing)
+matplotlib>=3.6.0
+seaborn>=0.12.0
+
+# ModelArts SDK
+modelarts>=1.4.0
+
+# API Server (for inference)
+flask>=2.3.0
+gunicorn>=21.0.0
+
+# Utilities
+tqdm>=4.65.0
+pyyaml>=6.0

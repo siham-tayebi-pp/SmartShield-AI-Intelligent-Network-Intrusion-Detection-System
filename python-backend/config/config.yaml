@@ -1,0 +1,86 @@
+# Configuration pour NIDS MindSpore - Huawei ICT Competition
+# Système de Détection d'Intrusion basé sur ResNet-LSTM
+
+# === Configuration du Dataset ===
+dataset:
+  name: "CIC-IDS2017"
+  path: "/data/cicids2017/"
+  # Classes d'attaques à détecter
+  classes:
+    - "Normal"
+    - "DDoS"
+    - "PortScan"
+    - "BruteForce"
+    - "SQLInjection"
+    - "WebAttack"
+    - "Botnet"
+  num_classes: 7
+  # Caractéristiques sélectionnées (78 features du CIC-IDS)
+  selected_features: 78
+  train_split: 0.8
+  validation_split: 0.1
+  test_split: 0.1
+
+# === Configuration du Modèle ===
+model:
+  name: "ResNet-LSTM-NIDS"
+  architecture:
+    # ResNet pour extraction de features
+    resnet:
+      num_blocks: [2, 2, 2, 2]
+      in_channels: 1
+      num_features: 512
+    # LSTM pour séquences temporelles
+    lstm:
+      hidden_size: 256
+      num_layers: 2
+      dropout: 0.3
+      bidirectional: true
+    # Classification finale
+    classifier:
+      hidden_dim: 128
+      dropout: 0.5
+
+# === Configuration d'Entraînement ===
+training:
+  epochs: 100
+  batch_size: 256
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "Adam"
+  scheduler:
+    type: "CosineAnnealing"
+    T_max: 100
+    eta_min: 0.00001
+  early_stopping:
+    patience: 10
+    min_delta: 0.001
+
+# === Configuration MindSpore ===
+mindspore:
+  mode: "GRAPH_MODE"  # ou PYNATIVE_MODE pour debug
+  device_target: "Ascend"  # GPU, CPU, ou Ascend
+  device_id: 0
+  save_checkpoint: true
+  checkpoint_path: "./checkpoints/"
+  checkpoint_interval: 5
+
+# === Configuration ModelArts ===
+modelarts:
+  project_name: "nids-mindspore"
+  workspace: "/home/ma-user/work/"
+  obs_bucket: "obs://your-bucket-name/"
+  training:
+    pool_id: "pool-xxx"  # ID du pool de ressources
+    flavor: "modelarts.p3.large.ex"  # Ascend 910
+    instance_count: 1
+  inference:
+    model_name: "nids-resnet-lstm"
+    service_name: "nids-inference"
+    instance_count: 1
+
+# === Chemins de sortie ===
+output:
+  model_path: "./output/model/"
+  logs_path: "./output/logs/"
+  metrics_path: "./output/metrics/"
